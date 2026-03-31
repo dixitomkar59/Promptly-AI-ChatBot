@@ -111,12 +111,14 @@ app.post('/chat', async (req, res) => {
         // 6e. Save the conversation to the database
         const query = 'INSERT INTO chat_history (user_message, ai_response) VALUES (?, ?)';
         db.query(query, [message, aiReply], (err) => {
-            if (err) console.error('❌ Error saving to DB:', err);
-            else console.log('💾 Chat saved to SQL!');
+            if (err) {
+                console.error('❌ Error saving to DB:', err);
+            } else {
+                console.log('💾 Chat saved to SQL!');
+            }
+            // 6f. Send the AI's reply back to the frontend AFTER saving
+            res.json({ reply: aiReply });
         });
-
-        // 6f. Send the AI's reply back to the frontend
-        res.json({ reply: aiReply });
 
     } catch (error) {
         // 6g. If anything goes wrong, log it and tell the frontend
