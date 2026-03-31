@@ -52,13 +52,16 @@ if (process.env.DB_SSL === 'true') {
     dbConfig.ssl = { rejectUnauthorized: false };
 }
 
-const db = mysql.createConnection(dbConfig);
+// Use a connection pool so that it automatically reconnects if Aiven drops the connection
+const db = mysql.createPool(dbConfig);
 
-db.connect((err) => {
+// Test the pool connection on startup
+db.getConnection((err, connection) => {
     if (err) {
         console.error('❌ Database connection failed:', err.stack);
     } else {
         console.log('✅ Connected to MySQL Database!');
+        connection.release();
     }
 });
 
